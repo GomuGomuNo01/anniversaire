@@ -6,17 +6,16 @@
     <title>🎉 Joyeux Anniversaire</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<audio id="audio" loop>
+<body>
+<audio id="audio" loop autoplay playsinline preload="auto">
     <source src="music.mp3" type="audio/mpeg">
 </audio>
-<body>
 
 <!-- Écran d'intro plein écran -->
 <div id="intro-screen" class="intro-screen">
     <div class="intro-center">
         <h1 id="intro-title">Joyeux anniversaire 🎉</h1>
         <h2 id="intro-name">Séphanie Natacha Lebato</h2>
-        <p class="intro-sub">Un petit projet rien que pour toi 💛</p>
     </div>
     <!-- Les cadeaux seront injectés ici par JS -->
 </div>
@@ -27,15 +26,6 @@
     <div class="fx-message" id="fx-message"></div>
 </div>
 
-<div class="container hidden" id="main">
-
-    <div id="choices" class="hidden">
-        <button onclick="showMessage('sincere')">💛 Message sincère</button>
-        <button onclick="showMessage('surprise')">🎁 Surprise</button>
-    </div>
-
-    <div id="message" class="message"></div>
-</div>
 
 <script src="script.js"></script>
 </body>

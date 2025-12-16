@@ -11,21 +11,7 @@ body {
 
 :root { --x: 50%; --y: 50%; }
 
-.container {
-    background: white;
-    padding: 35px 30px;
-    border-radius: 24px;
-    text-align: center;
-    max-width: 420px;
-    width: 92%;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-}
-
-#choices button {
-    margin: 14px 0;
-    padding: 14px;
-    font-size: 17px;
-}
+/* (supprimé) ancien conteneur et boutons de choix */
 
 
 
@@ -33,22 +19,7 @@ h1 {
     font-size: 24px;
 }
 
-button {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    background: #ff5e7e;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    opacity: 0.9;
-}
+/* (supprimé) styles boutons globaux */
 
 .hidden {
     display: none;
@@ -126,45 +97,46 @@ button:hover {
 
 .fx-message {
     position: absolute;
-    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    inset: 0;
     color: #fff;
+    display: grid;
+    place-items: center;
+    padding: 6vh 6vw;
     text-align: center;
-    font-size: 28px;
-    line-height: 1.3;
-    padding: 16px 22px;
-    border-radius: 14px;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(3px);
-    max-width: min(90vw, 640px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    background: transparent; /* garder les feux visibles */
 }
 
-/* Karaoke message */
-.message {
-    text-align: left;
-    max-height: 40vh;
-    overflow: hidden;
-    white-space: normal;
+/* (supprimé) ancien bloc message/karaoké */
+
+/* Paroles en plein écran (overlay Apple Music) */
+.overlay-lyrics {
+    width: min(100%, 900px);
+    max-height: 80vh;
+    overflow: auto; /* défilement interne si nécessaire, mais barres masquées */
+    padding-right: 8px;
 }
 
-.lyric-line { opacity: .5; transform: translateY(6px); transition: all 300ms ease; margin: 6px 0; }
-.lyric-line.active { opacity: 1; transform: translateY(0); color: #b30045; }
-.lyrics { max-height: 40vh; overflow: auto; padding-right: 8px; }
-
-/* Buttons festive */
-button {
-    position: relative;
-    overflow: hidden;
+.overlay-line {
+    font-size: clamp(22px, 5vw, 44px);
+    line-height: 1.25;
+    margin: 10px 0;
+    opacity: .35;
+    transform: translateY(8px);
+    transition: all 380ms ease;
 }
 
-button::after {
-    content: "";
-    position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(200px 60px at var(--x,50%) var(--y,50%), rgba(255,255,255,.35), transparent 60%);
-    opacity: 0; transition: opacity 250ms ease;
+/* Masquer visuellement les barres de défilement de l'overlay (tout navigateurs) */
+.overlay-lyrics::-webkit-scrollbar { display: none; }
+.overlay-lyrics { scrollbar-width: none; -ms-overflow-style: none; }
+
+.overlay-line.active {
+    opacity: 1;
+    transform: translateY(0);
+    color: #fff;
+    text-shadow: 0 2px 18px rgba(0,0,0,.35);
 }
 
-button:hover::after { opacity: 1; }
+/* (supprimé) effets décoratifs pour boutons */
 
 @media (max-width: 480px) {
 
@@ -176,15 +148,7 @@ button:hover::after { opacity: 1; }
         font-size: 18px;
     }
 
-    .container {
-        padding: 28px 22px;
-        border-radius: 20px;
-    }
-
-    button {
-        font-size: 16px;
-        padding: 14px;
-    }
+    /* (supprimé) responsive pour ancien conteneur et boutons */
 
     .fx-message {
         font-size: 20px;
@@ -192,8 +156,4 @@ button:hover::after { opacity: 1; }
     }
 }
 
-#music-toggle {
-    background: #ffd166;
-    color: #5a3b00;
-    font-weight: bold;
-}
+/* (supprimé) style du bouton de musique (plus présent) */

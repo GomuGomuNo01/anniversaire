@@ -1,5 +1,4 @@
 // --- Intro plein écran avec cadeaux flottants ---
-let typeIndex = 0;
 
 window.addEventListener('load', () => {
     spawnGifts(32); // cadeaux animés
@@ -9,8 +8,8 @@ window.addEventListener('load', () => {
         introScreen.classList.add('fade-out');
         setTimeout(() => {
             introScreen.style.display = 'none';
-            document.getElementById('main').classList.remove('hidden');
-            typeIntro();
+            // Lancer directement la célébration (feux d'artifice + message centré + musique)
+            startCelebration();
         }, 900);
     }, 4500);
 });
@@ -34,147 +33,42 @@ function spawnGifts(count) {
     }
 }
 
-function typeIntro() {
-    const target = document.getElementById('intro');
-    const text = target?.dataset?.introText || '';
-    if (typeIndex < text.length) {
-        target.innerText += text.charAt(typeIndex);
-        typeIndex++;
-        setTimeout(typeIntro, 45);
-    } else {
-        document.getElementById('choices').classList.remove('hidden');
-    }
+// (supprimé) ancien flux d'intro avec saisie progressive
+
+// Démarre la célébration plein écran avec feux d'artifice, paroles centrées et musique
+function startCelebration() {
+    // Texte sincère façon Apple Music (une ligne à la fois)
+    const lines = [
+        "💛 Séphanie,",
+        "Aujourd’hui, je te souhaite un très doux anniversaire 🎂",
+        "À mon arrivée en France, tu as été la première pote que j'ai eu,",
+        "et ce lien me marquera toujours.",
+        "",
+        "J’admire ta force, ta douceur et ton courage,",
+        "ce sourire qui illumine tout autour de toi ✨",
+        "",
+        "Merci d’être toi, simplement et sincèrement.",
+        "Bon anniversaire 💛 Je t’aime."
+    ];
+
+    // Afficher l'overlay feux d'artifice
+    showFireworksOverlay("");
+
+    // Lancer les paroles au centre de l'écran
+    playOverlayLyrics(lines, 1700);
+
+    // Tenter l'autoplay de la musique
+    startMusic();
 }
 
-// Effet survol boutons (rayon lumineux)
-document.addEventListener('pointermove', (e) => {
-    if (!(e.target instanceof HTMLElement)) return;
-    if (e.target.tagName.toLowerCase() === 'button') {
-        const rect = e.target.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        e.target.style.setProperty('--x', x + '%');
-        e.target.style.setProperty('--y', y + '%');
-    }
-});
+// (supprimé) effets hover pour boutons — plus de boutons à l'écran
 
-// --- Affichage des messages ---
-function showMessage(type) {
-    const messageEl = document.getElementById('message');
-    messageEl.innerHTML = '';
+// (supprimé) ancien système de boutons pour afficher les messages
 
-    if (type === 'sincere') {
-        // Message sincère en mode "paroles" façon Apple Music
-        const lines = [
-            "💛 Séphanie Natacha,",
-            "Aujourd’hui, je te souhaite un très doux anniversaire 🎂",
-            "À mon arrivée en France, tu as été la première à m’ouvrir ton cœur,",
-            "et ce lien me marquera toujours.",
-            "",
-            "J’admire ta force, ta douceur et ton courage,",
-            "ce sourire qui illumine tout autour de toi ✨",
-            "",
-            "Merci d’être toi, simplement et sincèrement.",
-            "Bon anniversaire 💛 Je t’aime."
-        ];
-        playKaraoke(lines, 1700);
-        return;
-    }
-
-    if (type === 'surprise') {
-        showFireworksOverlay(
-            "🎆 Joyeux anniversaire,\nSéphanie!\n\nQue cette journée soit pleine de lumière, de force\net de sourires. Amitiés sincères 💛"
-        );
-        return;
-    }
-}
-
-// --- Karaoke style ---
-function playKaraoke(lines, interval = 1500) {
-    const messageEl = document.getElementById('message');
-    const wrap = document.createElement('div');
-    wrap.className = 'lyrics';
-    messageEl.appendChild(wrap);
-
-    let i = 0;
-    function next() {
-        if (i >= lines.length) return;
-        const p = document.createElement('p');
-        p.className = 'lyric-line';
-        p.textContent = lines[i];
-        wrap.appendChild(p);
-        // Activer la ligne avec un léger délai pour transition CSS
-        requestAnimationFrame(() => { p.classList.add('active'); });
-        // Scroll doux vers le bas
-        wrap.scrollTo({ top: wrap.scrollHeight, behavior: 'smooth' });
-        i++;
-        setTimeout(next, interval);
-    }
-    next();
-}
+// (supprimé) ancien mode karaoké dans le conteneur principal
 
 // Ouvrir le message sincère dans une nouvelle page centrée
-function openSincerePage(lines, interval = 1500) {
-    const win = window.open('', '_blank');
-    if (!win) {
-        // Si le popup est bloqué, bascule en mode in-page en secours
-        playKaraoke(lines, interval);
-        return;
-    }
-    const safeLines = JSON.stringify(lines);
-    const html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💛 Message sincère</title>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body {
-      background: radial-gradient(1000px 500px at 50% -10%, #ffe3ec, #ff9a9e 60%, #ff6a88 100%);
-      display: grid; place-items: center; font-family: Arial, sans-serif; color: #222;
-    }
-    .card {
-      width: min(90vw, 800px);
-      background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.15);
-      padding: 24px; text-align: center;
-    }
-    h1 { margin: 0 0 10px; color: #b30045; }
-    .lyrics { max-height: 60vh; overflow: auto; text-align: left; margin-top: 8px; padding-right: 8px; }
-    .lyric-line { opacity: .5; transform: translateY(6px); transition: all 300ms ease; margin: 8px 0; }
-    .lyric-line.active { opacity: 1; transform: translateY(0); color: #b30045; }
-    .hint { margin-top: 12px; font-size: 12px; opacity: .7; }
-  </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>💛 Message pour Séphanie Natacha</h1>
-      <div id="wrap" class="lyrics"></div>
-    </div>
-    <script>
-      const LINES = ${safeLines};
-      const INTERVAL = ${Number(interval)};
-      const wrap = document.getElementById('wrap');
-      let i = 0;
-      function next() {
-        if (i >= LINES.length) return;
-        const p = document.createElement('p');
-        p.className = 'lyric-line';
-        p.textContent = LINES[i];
-        wrap.appendChild(p);
-        requestAnimationFrame(() => p.classList.add('active'));
-        wrap.scrollTo({ top: wrap.scrollHeight, behavior: 'smooth' });
-        i++;
-        setTimeout(next, INTERVAL);
-      }
-      next();
-    <\/script>
-  </body>
-</html>`;
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-}
+// (supprimé) ouverture d'une page secondaire pour le message
 
 // --- Overlay Feu d'artifice ---
 function showFireworksOverlay(centerMessage) {
@@ -182,7 +76,8 @@ function showFireworksOverlay(centerMessage) {
     const canvas = document.getElementById('fx-canvas');
     const ctx = canvas.getContext('2d');
     const msg = document.getElementById('fx-message');
-    msg.textContent = centerMessage;
+    // Permettra d'afficher des paroles animées au centre
+    msg.innerHTML = centerMessage ? `<div class="overlay-lyrics"><p class="overlay-line active">${centerMessage}</p></div>` : '<div class="overlay-lyrics"></div>';
     overlay.classList.remove('hidden');
 
     // Ajuster la taille
@@ -261,16 +156,36 @@ function showFireworksOverlay(centerMessage) {
     }
     step();
 
-    function close() {
-        cancelAnimationFrame(animId);
-        window.removeEventListener('resize', resize);
-        overlay.classList.add('hidden');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Pas de fermeture automatique: l'overlay reste pour profiter du spectacle et des paroles
+}
+
+// Affiche des paroles façon Apple Music au centre de l'écran (dans l'overlay)
+function playOverlayLyrics(lines, interval = 1500) {
+    const msg = document.getElementById('fx-message');
+    if (!msg) return;
+    let wrap = msg.querySelector('.overlay-lyrics');
+    if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.className = 'overlay-lyrics';
+        msg.innerHTML = '';
+        msg.appendChild(wrap);
+    } else {
+        wrap.innerHTML = '';
     }
 
-    // Auto-fermeture après 8s ou clic
-    const timer = setTimeout(close, 8000);
-    overlay.addEventListener('click', () => { clearTimeout(timer); close(); }, { once: true });
+    let i = 0;
+    function next() {
+        if (i >= lines.length) return;
+        const p = document.createElement('p');
+        p.className = 'overlay-line';
+        p.textContent = lines[i] === '' ? '\u00A0' : lines[i];
+        wrap.appendChild(p);
+        requestAnimationFrame(() => p.classList.add('active'));
+        wrap.scrollTo({ top: wrap.scrollHeight, behavior: 'smooth' });
+        i++;
+        setTimeout(next, interval);
+    }
+    next();
 }
 
 // --- Musique de fond (lecture en boucle tant que la page est ouverte) ---
@@ -280,22 +195,10 @@ function startMusic() {
     if (!bgMusic) return;
     bgMusic.loop = true; // s’assurer de la boucle
     bgMusic.volume = 0.35;
-    bgMusic.play().catch(() => {});
-}
-
-// Lancer la musique au premier clic utilisateur (mobile friendly)
-document.addEventListener('click', startMusic, { once: true });
-
-// Optionnel: gestion d’un éventuel bouton de toggle s’il existe dans la page
-const toggleBtn = document.getElementById('music-toggle');
-if (toggleBtn && bgMusic) {
-    toggleBtn.addEventListener('click', () => {
-        if (bgMusic.paused) {
-            bgMusic.play();
-            toggleBtn.textContent = '🔊 Musique';
-        } else {
-            bgMusic.pause();
-            toggleBtn.textContent = '🔇 Musique';
-        }
+    bgMusic.play().catch(() => {
+        // Autoplay peut être bloqué sur mobile; on garde le fallback sur premier clic
     });
 }
+
+// Lancer la musique au premier clic utilisateur (fallback si l'autoplay est bloqué)
+document.addEventListener('click', startMusic, { once: true });
