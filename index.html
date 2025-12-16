@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<audio id="audio" loop autoplay playsinline preload="auto">
+
+<audio id="audio" loop preload="auto" playsinline>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
@@ -17,15 +18,16 @@
         <h1 id="intro-title">Joyeux anniversaire 🎉</h1>
         <h2 id="intro-name">Séphanie Natacha Lebato</h2>
     </div>
-    <!-- Les cadeaux seront injectés ici par JS -->
 </div>
+
+<!-- Bouton discret pour activer la musique si autoplay bloqué -->
+<button id="play-music-btn" class="play-music-btn hidden">🎵 Activer la musique</button>
 
 <!-- Overlay animations (feu d'artifice / confettis) -->
 <div id="fx-overlay" class="fx-overlay hidden">
     <canvas id="fx-canvas"></canvas>
     <div class="fx-message" id="fx-message"></div>
 </div>
-
 
 <script src="script.js"></script>
 </body>

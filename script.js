@@ -1,14 +1,10 @@
-// --- Intro plein écran avec cadeaux flottants ---
-
 window.addEventListener('load', () => {
-    spawnGifts(32); // cadeaux animés
-    // Fin de l'intro après 4.5s
+    spawnGifts(32);
     setTimeout(() => {
         const introScreen = document.getElementById('intro-screen');
         introScreen.classList.add('fade-out');
         setTimeout(() => {
             introScreen.style.display = 'none';
-            // Lancer directement la célébration (feux d'artifice + message centré + musique)
             startCelebration();
         }, 900);
     }, 4500);
@@ -28,16 +24,11 @@ function spawnGifts(count) {
         span.style.animationDuration = dur + 'ms';
         span.style.animationDelay = delay + 'ms';
         intro.appendChild(span);
-        // cleanup
         setTimeout(() => { span.remove(); }, delay + dur + 500);
     }
 }
 
-// (supprimé) ancien flux d'intro avec saisie progressive
-
-// Démarre la célébration plein écran avec feux d'artifice, paroles centrées et musique
 function startCelebration() {
-    // Texte sincère façon Apple Music (une ligne à la fois)
     const lines = [
         "💛 Séphanie,",
         "Aujourd’hui, le monde célèbre la merveilleuse personne que tu es 🎂",
@@ -51,45 +42,24 @@ function startCelebration() {
         "Joyeux anniversaire 💛 Avec tout mon amour et mon affection."
     ];
 
-    // Afficher l'overlay feux d'artifice
     showFireworksOverlay("");
-
-    // Lancer les paroles au centre de l'écran
     playOverlayLyrics(lines, 1700);
-
-    // Tenter l'autoplay de la musique
     startMusic();
 }
 
-// (supprimé) effets hover pour boutons — plus de boutons à l'écran
-
-// (supprimé) ancien système de boutons pour afficher les messages
-
-// (supprimé) ancien mode karaoké dans le conteneur principal
-
-// Ouvrir le message sincère dans une nouvelle page centrée
-// (supprimé) ouverture d'une page secondaire pour le message
-
-// --- Overlay Feu d'artifice ---
 function showFireworksOverlay(centerMessage) {
     const overlay = document.getElementById('fx-overlay');
     const canvas = document.getElementById('fx-canvas');
     const ctx = canvas.getContext('2d');
     const msg = document.getElementById('fx-message');
-    // Permettra d'afficher des paroles animées au centre
     msg.innerHTML = centerMessage ? `<div class="overlay-lyrics"><p class="overlay-line active">${centerMessage}</p></div>` : '<div class="overlay-lyrics"></div>';
     overlay.classList.remove('hidden');
 
-    // Ajuster la taille
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     resize();
     window.addEventListener('resize', resize);
 
-    let particles = [];
-    let rockets = [];
+    let particles = [], rockets = [];
     const gravity = 0.06;
     const colors = ['#ffd166', '#06d6a0', '#118ab2', '#ef476f', '#f0f', '#ff6a88'];
 
@@ -118,27 +88,19 @@ function showFireworksOverlay(centerMessage) {
         }
     }
 
-    let animId;
     function step() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Lancer des fusées
         if (Math.random() < 0.08) launchRocket();
-        // Update rockets
         rockets = rockets.filter(r => r.life > 0);
         rockets.forEach(r => {
             r.life -= 1;
             r.x += r.vx;
             r.y += r.vy;
             r.vy += gravity * 0.2;
-            // trainée
             ctx.fillStyle = 'rgba(255,255,255,0.7)';
             ctx.fillRect(r.x - 1, r.y - 1, 2, 2);
-            if (r.vy >= -0.5 || r.life <= 0) {
-                explode(r.x, r.y);
-                r.life = 0;
-            }
+            if (r.vy >= -0.5 || r.life <= 0) { explode(r.x, r.y); r.life = 0; }
         });
-        // Update particles
         particles = particles.filter(p => p.alpha > 0.02);
         particles.forEach(p => {
             p.vy += gravity;
@@ -152,14 +114,11 @@ function showFireworksOverlay(centerMessage) {
             ctx.fill();
             ctx.globalAlpha = 1;
         });
-        animId = requestAnimationFrame(step);
+        requestAnimationFrame(step);
     }
     step();
-
-    // Pas de fermeture automatique: l'overlay reste pour profiter du spectacle et des paroles
 }
 
-// Affiche des paroles façon Apple Music au centre de l'écran (dans l'overlay)
 function playOverlayLyrics(lines, interval = 1500) {
     const msg = document.getElementById('fx-message');
     if (!msg) return;
@@ -169,9 +128,7 @@ function playOverlayLyrics(lines, interval = 1500) {
         wrap.className = 'overlay-lyrics';
         msg.innerHTML = '';
         msg.appendChild(wrap);
-    } else {
-        wrap.innerHTML = '';
-    }
+    } else { wrap.innerHTML = ''; }
 
     let i = 0;
     function next() {
@@ -188,30 +145,33 @@ function playOverlayLyrics(lines, interval = 1500) {
     next();
 }
 
-// --- Musique de fond (lecture en boucle tant que la page est ouverte) ---
 const bgMusic = document.getElementById('audio');
 
 function startMusic() {
     if (!bgMusic) return;
     bgMusic.loop = true;
-    bgMusic.volume = 0; // démarre silencieux
+    bgMusic.volume = 0;
     bgMusic.play().then(() => {
-        // augmenter progressivement le volume pour contourner certains blocages autoplay
         let vol = 0;
         const fadeIn = setInterval(() => {
             vol += 0.01;
-            if (vol >= 0.35) {
-                vol = 0.35;
-                clearInterval(fadeIn);
-            }
+            if (vol >= 0.35) { vol = 0.35; clearInterval(fadeIn); }
             bgMusic.volume = vol;
         }, 100);
     }).catch(() => {
-        // fallback : le clic reste utile sur mobile
-        console.log("Autoplay bloqué, musique prête au clic.");
+        const btn = document.getElementById('play-music-btn');
+        if (btn) btn.classList.remove('hidden');
+
+        btn.addEventListener('click', () => {
+            bgMusic.play().then(() => {
+                let vol = 0;
+                const fadeIn = setInterval(() => {
+                    vol += 0.01;
+                    if (vol >= 0.35) { vol = 0.35; clearInterval(fadeIn); }
+                    bgMusic.volume = vol;
+                }, 100);
+                btn.classList.add('hidden');
+            });
+        }, { once: true });
     });
 }
-
-
-// Lancer la musique au premier clic utilisateur (fallback si l'autoplay est bloqué)
-//document.addEventListener('click', startMusic, { once: true });
