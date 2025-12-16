@@ -40,15 +40,15 @@ function startCelebration() {
     // Texte sincère façon Apple Music (une ligne à la fois)
     const lines = [
         "💛 Séphanie,",
-        "Aujourd’hui, je te souhaite un très doux anniversaire 🎂",
-        "À mon arrivée en France, tu as été la première pote que j'ai eu,",
-        "et ce lien me marquera toujours.",
+        "Aujourd’hui, le monde célèbre la merveilleuse personne que tu es 🎂",
+        "Depuis mon arrivée en France, tu as été la première amie qui a illuminé mon quotidien,",
+        "et ce lien précieux restera gravé dans mon cœur pour toujours.",
         "",
-        "J’admire ta force, ta douceur et ton courage,",
-        "ce sourire qui illumine tout autour de toi ✨",
+        "Ta force, ta douceur et ton courage sont inspirants,",
+        "ton sourire illumine tous ceux qui ont la chance de te connaître ✨",
         "",
         "Merci d’être toi, simplement et sincèrement.",
-        "Bon anniversaire 💛 Je t’aime."
+        "Joyeux anniversaire 💛 Avec tout mon amour et mon affection."
     ];
 
     // Afficher l'overlay feux d'artifice
@@ -193,12 +193,25 @@ const bgMusic = document.getElementById('audio');
 
 function startMusic() {
     if (!bgMusic) return;
-    bgMusic.loop = true; // s’assurer de la boucle
-    bgMusic.volume = 0.35;
-    bgMusic.play().catch(() => {
-        // Autoplay peut être bloqué sur mobile; on garde le fallback sur premier clic
+    bgMusic.loop = true;
+    bgMusic.volume = 0; // démarre silencieux
+    bgMusic.play().then(() => {
+        // augmenter progressivement le volume pour contourner certains blocages autoplay
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+            vol += 0.01;
+            if (vol >= 0.35) {
+                vol = 0.35;
+                clearInterval(fadeIn);
+            }
+            bgMusic.volume = vol;
+        }, 100);
+    }).catch(() => {
+        // fallback : le clic reste utile sur mobile
+        console.log("Autoplay bloqué, musique prête au clic.");
     });
 }
 
+
 // Lancer la musique au premier clic utilisateur (fallback si l'autoplay est bloqué)
-document.addEventListener('click', startMusic, { once: true });
+//document.addEventListener('click', startMusic, { once: true });
